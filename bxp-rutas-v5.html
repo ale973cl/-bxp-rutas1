@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BXP Rutas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root{--az:#0033A0;--ce:#00AEEF;--na:#F47920;--fo:#F0F4FA;--bo:#D1DCF0;--t2:#5A6A8A;--ve:#16a34a;--ro:#EF4444}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Inter',sans-serif;background:var(--fo);color:#1a2540;min-height:100vh;padding-bottom:88px}
+header{background:var(--az);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 10px rgba(0,51,160,.3)}
+.logo{display:flex;align-items:center;gap:7px}
+.dot{width:9px;height:9px;background:var(--ce);border-radius:50%}
+.brand{color:#fff;font-size:17px;font-weight:800}
+.brand span{color:var(--ce)}
+.hright{display:flex;align-items:center;gap:8px}
+.hfecha{color:rgba(255,255,255,.65);font-size:11px;font-weight:600}
+.btn-cd{background:var(--ro);color:#fff;border:none;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer}
+.view{display:none;padding:14px}
+.view.active{display:block}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.sbox{background:#fff;border-radius:12px;padding:11px 6px;text-align:center;border:1px solid var(--bo)}
+.snum{font-size:22px;font-weight:800;color:var(--az);line-height:1}
+.slbl{font-size:10px;color:var(--t2);font-weight:600;margin-top:3px;text-transform:uppercase;letter-spacing:.4px}
+.card{background:#fff;border-radius:14px;padding:15px;margin-bottom:12px;border:1px solid var(--bo);box-shadow:0 1px 5px rgba(0,51,160,.07)}
+
+/* PREVIEW IMG */
+.prev-wrap{background:#0a1628;border-radius:14px;overflow:hidden;margin-bottom:12px;min-height:80px;display:none;align-items:center;justify-content:center}
+.prev-wrap.show{display:flex}
+#prevImg{width:100%;max-height:240px;object-fit:contain}
+
+/* BOTONES */
+.btn-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px}
+.btn-cam{background:var(--na);color:#fff;border:none;border-radius:11px;padding:14px 6px;font-size:14px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-gal{background:var(--az);color:#fff;border:none;border-radius:11px;padding:14px 6px;font-size:14px;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-man{width:100%;background:none;border:2px dashed var(--bo);border-radius:11px;padding:12px;font-size:13px;font-weight:600;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:4px}
+
+/* FORMULARIOS */
+.fbox{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:14px;margin-top:11px;display:none}
+.fbox.show{display:block}
+.fbox.manual{background:#FFF7ED;border-color:#FED7AA}
+.flbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;color:var(--az)}
+.flbl.m{color:var(--na)}
+.fld{display:flex;flex-direction:column;gap:3px;margin-bottom:10px}
+.fld label{font-size:11px;color:var(--t2);font-weight:600}
+.fld input{border:1.5px solid var(--bo);border-radius:8px;padding:10px 12px;font-size:14px;font-family:'Inter',sans-serif;width:100%;outline:none;background:#fff}
+.fld input:focus{border-color:var(--az)}
+.fld input.err{border-color:var(--ro);background:#FFF5F5}
+.ocr-badge{font-size:11px;color:var(--t2);margin-top:3px;font-style:italic}
+.btn-add{width:100%;background:var(--az);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px}
+.btn-add.o{background:var(--na)}
+
+/* LOADING */
+.ldg{display:none;align-items:center;gap:10px;padding:12px;background:#EFF6FF;border-radius:10px;margin-top:10px}
+.ldg.show{display:flex}
+.ldg span{font-size:13px;color:var(--az);font-weight:600}
+.sp{width:17px;height:17px;border:2px solid rgba(0,51,160,.2);border-top-color:var(--az);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LISTA */
+.enc{background:#fff;border-radius:12px;padding:12px 13px;margin-bottom:7px;border:1px solid var(--bo);display:flex;align-items:flex-start;gap:11px;box-shadow:0 1px 4px rgba(0,51,160,.05)}
+.pnum{background:var(--az);color:#fff;font-size:14px;font-weight:800;min-width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pnum.g{background:var(--na)}
+.ei{flex:1;min-width:0}
+.enom{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.edir{font-size:12px;color:var(--t2);margin-top:2px;line-height:1.4}
+.gtag{display:inline-block;margin-top:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:#FEE2E2;color:#991B1B}
+.bdel{background:none;border:none;color:#CBD5E1;cursor:pointer;font-size:17px;padding:4px;flex-shrink:0}
+.empty{text-align:center;padding:36px 18px;color:var(--t2)}
+.empty .ei2{font-size:44px;margin-bottom:10px}
+.empty h3{font-size:15px;font-weight:700;margin-bottom:5px;color:#1a2540}
+.empty p{font-size:12px;line-height:1.5}
+
+/* RUTA */
+.btn-opt{width:100%;background:linear-gradient(135deg,var(--az),var(--ce));color:#fff;border:none;border-radius:13px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:9px;box-shadow:0 4px 14px rgba(0,51,160,.28)}
+.btn-opt:disabled{opacity:.5}
+.tip{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:11px;margin-bottom:11px;font-size:12px;color:var(--az);font-weight:600;line-height:1.5}
+.pcard{background:#fff;border-radius:13px;padding:13px;margin-bottom:9px;border:1px solid var(--bo);border-left:4px solid var(--az)}
+.pcard.g{border-left-color:var(--na)}
+.pn{font-size:10px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.pd{font-size:14px;font-weight:700;color:#1a2540;margin-bottom:7px;line-height:1.3}
+.pchips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:9px}
+.chip{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600;color:var(--az)}
+.btn-nav{width:100%;background:var(--ve);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px}
+.btn-rtot{width:100%;background:var(--na);color:#fff;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:11px;display:flex;align-items:center;justify-content:center;gap:7px}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:20px}
+.mbg.show{display:flex}
+.modal{background:#fff;border-radius:18px;padding:22px;width:100%;max-width:340px}
+.modal h3{font-size:17px;font-weight:800;margin-bottom:7px}
+.modal p{font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.5}
+.mbtns{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.btn-cx{background:var(--fo);color:#1a2540;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-ok{background:var(--ro);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer}
+
+/* NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--bo);display:flex;z-index:100;box-shadow:0 -3px 16px rgba(0,51,160,.07)}
+.nb{flex:1;padding:9px 4px 7px;text-align:center;cursor:pointer;border:none;background:none}
+.ni{font-size:21px;display:block}
+.nl{font-size:10px;font-weight:600;color:var(--t2);display:block;margin-top:1px}
+.nb.active .nl{color:var(--az)}
+.nb.active .ni{transform:scale(1.1)}
+
+/* TOAST */
+.toast{position:fixed;bottom:96px;left:50%;transform:translateX(-50%) translateY(16px);background:#1a2540;color:#fff;padding:9px 18px;border-radius:30px;font-size:13px;font-weight:600;opacity:0;transition:.3s;z-index:999;max-width:90vw;text-align:center;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* VIDEO (oculto pero funcional) */
+#videoEl{display:none;position:fixed;top:-9999px}
+#canvasEl{display:none;position:fixed;top:-9999px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><div class="dot"></div><div class="brand">BXP<span>Rutas</span></div></div>
+  <div class="hright">
+    <span class="hfecha" id="hfecha"></span>
+    <button class="btn-cd" onclick="abrirModal()">Cerrar día</button>
+  </div>
+</header>
+
+<!-- ══ ESCANEAR ══ -->
+<div id="view-escanear" class="view active">
+  <div class="stats">
+    <div class="sbox"><div class="snum" id="sTot">0</div><div class="slbl">Bultos</div></div>
+    <div class="sbox"><div class="snum" id="sPar">0</div><div class="slbl">Paradas</div></div>
+    <div class="sbox"><div class="snum" id="sGru">0</div><div class="slbl">Grupos</div></div>
+  </div>
+
+  <div class="card">
+    <!-- Preview de imagen capturada/cargada -->
+    <div class="prev-wrap" id="prevWrap">
+      <img id="prevImg" alt="Etiqueta">
+    </div>
+
+    <!-- Botones principales -->
+    <div class="btn-row">
+      <button class="btn-cam" id="btnCam" onclick="usarCamara()">📷 Cámara</button>
+      <button class="btn-gal" onclick="usarGaleria()">🖼️ Galería</button>
+    </div>
+    <button class="btn-man" onclick="toggleManual()">✏️ Ingresar manualmente</button>
+
+    <!-- Inputs ocultos -->
+    <!-- Galería: sin capture para abrir archivos -->
+    <input type="file" id="fileGal" accept="image/*" style="display:none" onchange="onFileSelected(event)">
+    <!-- Cámara: con capture=environment para abrir cámara directamente -->
+    <input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none" onchange="onFileSelected(event)">
+    <!-- Canvas y video para fallback WebRTC -->
+    <video id="videoEl" autoplay playsinline muted></video>
+    <canvas id="canvasEl"></canvas>
+
+    <!-- Loading OCR -->
+    <div class="ldg" id="ldg">
+      <div class="sp"></div>
+      <span>Leyendo etiqueta con IA...</span>
+    </div>
+
+    <!-- Resultado OCR -->
+    <div class="fbox" id="ocrBox">
+      <div class="flbl">✅ Datos leídos — verifica y confirma</div>
+      <div class="fld">
+        <label>Nombre destinatario</label>
+        <input type="text" id="oNom" placeholder="Nombre completo del destinatario">
+        <div class="ocr-badge" id="oNomBadge"></div>
+      </div>
+      <div class="fld">
+        <label>Dirección de entrega</label>
+        <input type="text" id="oDir" placeholder="Calle, número, ciudad">
+        <div class="ocr-badge" id="oDirBadge"></div>
+      </div>
+      <button class="btn-add" onclick="agregar('ocr')">+ Agregar a la lista</button>
+    </div>
+
+    <!-- Ingreso Manual -->
+    <div class="fbox manual" id="manBox">
+      <div class="flbl m">✏️ Ingreso manual</div>
+      <div class="fld">
+        <label>Nombre destinatario</label>
+        <input type="text" id="mNom" placeholder="Ej: María González">
+      </div>
+      <div class="fld">
+        <label>Dirección de entrega</label>
+        <input type="text" id="mDir" placeholder="Ej: Av. Alemania 456, Temuco">
+      </div>
+      <button class="btn-add o" onclick="agregar('man')">+ Agregar a la lista</button>
+    </div>
+  </div>
+
+  <!-- Lista de encomiendas -->
+  <div id="lista">
+    <div class="empty" id="emptyMsg">
+      <div class="ei2">📦</div>
+      <h3>Sin encomiendas aún</h3>
+      <p>Usa la cámara, galería o ingreso manual<br>para agregar cada bulto</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RUTA ══ -->
+<div id="view-ruta" class="view">
+  <button class="btn-opt" id="btnOpt" onclick="optimizar()">🗺️ Calcular ruta óptima</button>
+  <div id="rutaOut"></div>
+</div>
+
+<!-- Modal cerrar día -->
+<div class="mbg" id="modalBg">
+  <div class="modal">
+    <h3>⚠️ Cerrar el día</h3>
+    <p>Esto borrará todas las encomiendas de hoy. Úsalo al terminar la jornada.</p>
+    <div class="mbtns">
+      <button class="btn-cx" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-ok" onclick="cerrarDia()">Sí, cerrar día</button>
+    </div>
+  </div>
+</div>
+
+<!-- Nav inferior -->
+<div class="bnav">
+  <button class="nb active" id="nav-escanear" onclick="goTab('escanear')">
+    <span class="ni">📷</span><span class="nl">Escanear</span>
+  </button>
+  <button class="nb" id="nav-ruta" onclick="goTab('ruta')">
+    <span class="ni">🗺️</span><span class="nl">Ruta</span>
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+// ═══════════════════════════════════════
+// ESTADO GLOBAL
+// ═══════════════════════════════════════
+let encs = [];
+let plumN = 1;
+const HOY = new Date().toISOString().split('T')[0];
+
+// ═══════════════════════════════════════
+// PERSISTENCIA localStorage
+// ═══════════════════════════════════════
+function guardar() {
+  try {
+    localStorage.setItem('bxpv5', JSON.stringify({ fecha: HOY, encs, plumN }));
+  } catch(e) { console.warn('No se pudo guardar:', e); }
+}
+
+function cargar() {
+  try {
+    const raw = localStorage.getItem('bxpv5');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    if (d && d.fecha === HOY) {
+      encs = d.encs || [];
+      plumN = d.plumN || 1;
+    } else {
+      localStorage.removeItem('bxpv5');
+    }
+  } catch(e) {
+    localStorage.removeItem('bxpv5');
+  }
+}
+
+function cerrarDia() {
+  localStorage.removeItem('bxpv5');
+  encs = []; plumN = 1;
+  stats(); renderLista();
+  document.getElementById('rutaOut').innerHTML = '';
+  cerrarModal();
+  toast('✅ Día cerrado — lista limpia para mañana');
+}
+
+// ═══════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════
+function goTab(t) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('active'));
+  document.getElementById('view-' + t).classList.add('active');
+  document.getElementById('nav-' + t).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ═══════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════
+function abrirModal() { document.getElementById('modalBg').classList.add('show'); }
+function cerrarModal() { document.getElementById('modalBg').classList.remove('show'); }
+
+// ═══════════════════════════════════════
+// CÁMARA — usa input[capture] nativo
+// Funciona en cualquier navegador Android sin permisos WebRTC
+// ═══════════════════════════════════════
+function usarCamara() {
+  // Usar input con capture="environment" — abre cámara trasera directamente
+  document.getElementById('fileCam').click();
+}
+
+function usarGaleria() {
+  // Usar input sin capture — abre explorador de archivos/galería
+  document.getElementById('fileGal').click();
+}
+
+function onFileSelected(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = ''; // reset para permitir misma foto de nuevo
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    const b64 = dataUrl.split(',')[1];
+
+    // Mostrar preview
+    const wrap = document.getElementById('prevWrap');
+    const img = document.getElementById('prevImg');
+    img.src = dataUrl;
+    wrap.classList.add('show');
+
+    // Ocultar formularios anteriores
+    document.getElementById('ocrBox').classList.remove('show');
+
+    // Procesar con OCR
+    procesarOCR(b64);
+  };
+  reader.onerror = function() {
+    toast('Error al leer el archivo');
+  };
+  reader.readAsDataURL(file);
+}
+
+// ═══════════════════════════════════════
+// OCR CON IA
+// Usa fetch directo a la API de Anthropic
+// ═══════════════════════════════════════
+async function procesarOCR(b64) {
+  document.getElementById('ldg').classList.add('show');
+  document.getElementById('ocrBox').classList.remove('show');
+  document.getElementById('oNomBadge').textContent = '';
+  document.getElementById('oDirBadge').textContent = '';
+
+  const prompt = `Analiza esta imagen de una etiqueta de despacho de courier chileno y extrae los datos del destinatario.
+
+NOMBRE DEL DESTINATARIO — busca en este orden:
+- "A nombre de:" → el nombre que sigue
+- "ENVIAR A:" → el nombre (antes de la dirección si hay ambos)
+- Nombre en negrita seguido de código entre paréntesis → solo el nombre, sin el código. Ejemplo: "José Donoso (DJCOTED00)" extrae "José Donoso"
+- "NOMBRE DEL CLIENTE:" o "Destinatario:" o "Para:"
+NO uses nombre del remitente, vendedor ni sucursal.
+
+DIRECCIÓN DE ENTREGA — busca en este orden:
+- "DIR DEST:" ← más común en Blue Express
+- "Domicilio:"
+- "DIRECCIÓN:" o "DIREC:"
+- Texto escrito a mano en el bulto (ej: "G. Mackena 712", "Alemania 1234")
+- "Destination:"
+NUNCA uses "DIR REMITENTE", "Remitente", "Origen" ni dirección del vendedor.
+Incluye la ciudad/comuna si aparece.
+
+Responde SOLO con este JSON, sin texto extra ni markdown:
+{"nombre":"NOMBRE AQUI","direccion":"DIRECCION, CIUDAD","fuente_nombre":"campo donde lo encontraste","fuente_dir":"campo donde lo encontraste"}
+
+Si no puedes leer un campo con certeza, usa cadena vacía "".`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.text();
+      throw new Error('API ' + response.status + ': ' + err);
+    }
+
+    const data = await response.json();
+    const txt = (data.content?.[0]?.text || '').trim().replace(/```json|```/g, '').trim();
+    const match = txt.match(/\{[\s\S]*?\}/);
+    if (!match) throw new Error('JSON no encontrado');
+
+    const p = JSON.parse(match[0]);
+    const nom = (p.nombre || '').trim();
+    const dir = (p.direccion || '').trim();
+
+    document.getElementById('oNom').value = nom;
+    document.getElementById('oDir').value = dir;
+    document.getElementById('oNom').className = nom ? '' : 'err';
+    document.getElementById('oDir').className = dir ? '' : 'err';
+
+    if (p.fuente_nombre) document.getElementById('oNomBadge').textContent = '📌 ' + p.fuente_nombre;
+    if (p.fuente_dir)    document.getElementById('oDirBadge').textContent  = '📌 ' + p.fuente_dir;
+
+    document.getElementById('ocrBox').classList.add('show');
+
+    if (!nom && !dir) toast('⚠️ No se detectaron datos — ingresa manualmente');
+    else if (!nom || !dir) toast('⚠️ Completa el campo faltante');
+    else toast('✅ Etiqueta leída — verifica los datos');
+
+  } catch(e) {
+    console.error('OCR error:', e);
+    // Mostrar formulario vacío para ingreso manual
+    document.getElementById('oNom').value = '';
+    document.getElementById('oDir').value = '';
+    document.getElementById('oNom').className = 'err';
+    document.getElementById('oDir').className = 'err';
+    document.getElementById('ocrBox').classList.add('show');
+    toast('⚠️ No se pudo leer la etiqueta — ingresa los datos');
+  } finally {
+    document.getElementById('ldg').classList.remove('show');
+  }
+}
+
+// ═══════════════════════════════════════
+// INGRESO MANUAL
+// ═══════════════════════════════════════
+function toggleManual() {
+  const b = document.getElementById('manBox');
+  b.classList.toggle('show');
+  if (b.classList.contains('show')) {
+    setTimeout(() => document.getElementById('mNom').focus(), 100);
+  }
+}
+
+// ═══════════════════════════════════════
+// AGREGAR ENCOMIENDA
+// ═══════════════════════════════════════
+function agregar(src) {
+  const nomEl = src === 'ocr' ? 'oNom' : 'mNom';
+  const dirEl = src === 'ocr' ? 'oDir' : 'mDir';
+
+  const nom = document.getElementById(nomEl).value.trim();
+  const dir = document.getElementById(dirEl).value.trim();
+
+  if (!nom) {
+    document.getElementById(nomEl).className = 'err';
+    toast('⚠️ Ingresa el nombre del destinatario');
+    return;
+  }
+  if (!dir) {
+    document.getElementById(dirEl).className = 'err';
+    toast('⚠️ Ingresa la dirección de entrega');
+    return;
+  }
+
+  const enc = {
+    id: Date.now(),
+    plum: plumN++,
+    nombre: nom,
+    direccion: dir.toUpperCase().trim().replace(/\s+/g, ' ')
+  };
+  encs.push(enc);
+  guardar(); stats(); renderLista();
+
+  // Limpiar
+  if (src === 'ocr') {
+    document.getElementById('oNom').value = '';
+    document.getElementById('oDir').value = '';
+    document.getElementById('oNom').className = '';
+    document.getElementById('oDir').className = '';
+    document.getElementById('oNomBadge').textContent = '';
+    document.getElementById('oDirBadge').textContent = '';
+    document.getElementById('ocrBox').classList.remove('show');
+    document.getElementById('prevWrap').classList.remove('show');
+  } else {
+    document.getElementById('mNom').value = '';
+    document.getElementById('mDir').value = '';
+    document.getElementById('manBox').classList.remove('show');
+  }
+
+  toast('✅ Bulto #' + enc.plum + ' — ' + nom.split(' ')[0]);
+}
+
+// ═══════════════════════════════════════
+// RENDER LISTA
+// ═══════════════════════════════════════
+function renderLista() {
+  const lista = document.getElementById('lista');
+  lista.querySelectorAll('.enc').forEach(e => e.remove());
+  const empty = document.getElementById('emptyMsg');
+
+  if (encs.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+
+  // Calcular grupos por dirección
+  const gMap = {};
+  encs.forEach(e => {
+    if (!gMap[e.direccion]) gMap[e.direccion] = [];
+    gMap[e.direccion].push(e.plum);
+  });
+
+  // Mostrar último agregado primero
+  encs.slice().reverse().forEach(enc => {
+    const esG = gMap[enc.direccion].length > 1;
+    const div = document.createElement('div');
+    div.className = 'enc';
+    div.innerHTML = `
+      <div class="pnum ${esG ? 'g' : ''}">${enc.plum}</div>
+      <div class="ei">
+        <div class="enom">${enc.nombre}</div>
+        <div class="edir">${enc.direccion}</div>
+        ${esG ? `<div><span class="gtag">🔴 ${gMap[enc.direccion].length} bultos misma dirección</span></div>` : ''}
+      </div>
+      <button class="bdel" onclick="delEnc(${enc.id})">✕</button>`;
+    empty.insertAdjacentElement('afterend', div);
+  });
+}
+
+function delEnc(id) {
+  encs = encs.filter(e => e.id !== id);
+  guardar(); stats(); renderLista();
+  toast('Bulto eliminado');
+}
+
+function stats() {
+  document.getElementById('sTot').textContent = encs.length;
+  const dirs = [...new Set(encs.map(e => e.direccion))];
+  document.getElementById('sPar').textContent = dirs.length;
+  document.getElementById('sGru').textContent =
+    dirs.filter(d => encs.filter(e => e.direccion === d).length > 1).length;
+}
+
+// ═══════════════════════════════════════
+// OPTIMIZAR RUTA
+// ═══════════════════════════════════════
+async function optimizar() {
+  if (encs.length === 0) { toast('⚠️ Agrega encomiendas primero'); return; }
+
+  const btn = document.getElementById('btnOpt');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="sp" style="border-color:rgba(255,255,255,.3);border-top-color:#fff"></div> Calculando...';
+
+  // Agrupar por dirección
+  const gMap = {};
+  encs.forEach(e => {
+    if (!gMap[e.direccion]) gMap[e.direccion] = [];
+    gMap[e.direccion].push(e);
+  });
+  const paradas = Object.entries(gMap).map(([dir, bultos]) => ({ dir, bultos }));
+
+  let ordenadas = paradas;
+  let tip = '';
+
+  try {
+    const lista = paradas.map((p, i) => `${i + 1}. ${p.dir}`).join('\n');
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-dangerous-allow-browser': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 400,
+        messages: [{
+          role: 'user',
+          content: `Optimiza esta ruta de reparto en Chile. Ordena las paradas para minimizar el recorrido total en vehículo, siguiendo el sentido lógico de las calles y agrupando por sectores cercanos.\n\nParadas:\n${lista}\n\nResponde SOLO con JSON válido:\n{"orden":[2,1,3],"tip":"Criterio usado en una línea"}`
+        }]
+      })
+    });
+
+    const data = await res.json();
+    const txt = (data.content?.[0]?.text || '').trim().replace(/```json|```/g, '').trim();
+    const match = txt.match(/\{[\s\S]*\}/);
+    if (match) {
+      const p = JSON.parse(match[0]);
+      if (Array.isArray(p.orden) && p.orden.length > 0) {
+        const ord = p.orden.map(i => paradas[i - 1]).filter(Boolean);
+        paradas.forEach(p => { if (!ord.find(o => o.dir === p.dir)) ord.push(p); });
+        ordenadas = ord;
+        tip = p.tip || '';
+      }
+    }
+  } catch(e) {
+    tip = 'Orden de ingreso (la optimización IA no está disponible momentáneamente)';
+  }
+
+  renderRuta(ordenadas, tip);
+  btn.disabled = false;
+  btn.innerHTML = '🔄 Recalcular ruta';
+}
+
+// ═══════════════════════════════════════
+// RENDER RUTA
+// ═══════════════════════════════════════
+function renderRuta(paradas, tip) {
+  let html = '';
+
+  if (tip) {
+    html += `<div class="tip">💡 ${tip}</div>`;
+  }
+
+  // Construir URL Google Maps
+  const buildMapsUrl = (ps) => {
+    if (ps.length === 1) {
+      return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ps[0].dir)}`;
+    }
+    const o = encodeURIComponent(ps[0].dir);
+    const d = encodeURIComponent(ps[ps.length - 1].dir);
+    const wps = ps.slice(1, -1).map(p => encodeURIComponent(p.dir)).join('|');
+    let url = `https://www.google.com/maps/dir/?api=1&origin=${o}&destination=${d}&travelmode=driving`;
+    if (wps) url += `&waypoints=${wps}`;
+    return url;
+  };
+
+  const urlTotal = buildMapsUrl(paradas);
+  html += `<a href="${urlTotal}" target="_blank" rel="noopener" class="btn-rtot">
+    🗺️ Ruta completa — ${paradas.length} paradas en Maps
+  </a>`;
+
+  paradas.forEach((par, idx) => {
+    const esG = par.bultos.length > 1;
+    const chips = par.bultos
+      .map(b => `<span class="chip">#${b.plum} ${b.nombre.split(' ')[0]}</span>`)
+      .join('');
+    const urlNav = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(par.dir)}&travelmode=driving`;
+
+    html += `<div class="pcard ${esG ? 'g' : ''}">
+      <div class="pn">Parada ${idx + 1}${esG ? ' — ' + par.bultos.length + ' BULTOS' : ''}</div>
+      <div class="pd">${par.dir}</div>
+      <div class="pchips">${chips}</div>
+      <a href="${urlNav}" target="_blank" rel="noopener" class="btn-nav">📍 Navegar aquí</a>
+    </div>`;
+  });
+
+  document.getElementById('rutaOut').innerHTML = html;
+}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function mostrarFecha() {
+  const d = new Date();
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const mes = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  document.getElementById('hfecha').textContent =
+    `${dias[d.getDay()]} ${d.getDate()} ${mes[d.getMonth()]}`;
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+mostrarFecha();
+cargar();
+stats();
+renderLista();
+</script>
+</body>
+</html>
